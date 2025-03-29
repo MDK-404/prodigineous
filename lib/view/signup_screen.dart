@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:prodigenius/viewmodel/auth_view_model.dart';
+import 'package:prodigenious/viewmodel/auth_view_model.dart';
 import 'package:provider/provider.dart';
 
 class SignupScreen extends StatelessWidget {

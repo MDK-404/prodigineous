@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:prodigenius/widgets/custom_appbar.dart';
-import 'package:prodigenius/widgets/navigation_bar.dart';
+import 'package:prodigenious/view/task_history.dart';
+import 'package:prodigenious/widgets/custom_appbar.dart';
+import 'package:prodigenious/widgets/navigation_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -14,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String username = "";
   String userEmail = "";
+
   bool hasCompletedTasks = false; // Track completed tasks
 
   @override
@@ -36,135 +38,216 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void showAddTaskDialog() {
     TextEditingController taskController = TextEditingController();
-    String selectedPriority = "Medium";
-    DateTime selectedDate = DateTime.now();
+    String selectedPriority = "High";
+    DateTime? selectedDueDate;
 
     showDialog(
       context: context,
       builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Text("Enter Task Manually"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: taskController,
-                    decoration: InputDecoration(labelText: "Task Title"),
-                  ),
-                  SizedBox(height: 10),
-                  Align(
-                      alignment: Alignment.centerLeft, child: Text("Priority")),
-                  DropdownButtonFormField<String>(
-                    value: selectedPriority,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10),
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+          backgroundColor: Color(0xFFA558E0),
+          child: Container(
+            padding: EdgeInsets.all(20),
+            width: MediaQuery.of(context).size.width * 0.85,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Title + Close Button Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Add New Task Manually",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedPriority = newValue!;
-                      });
-                    },
-                    items: ["High", "Medium", "Low"]
-                        .map((priority) => DropdownMenuItem(
-                              value: priority,
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    priority == "High"
-                                        ? Icons.priority_high
-                                        : priority == "Medium"
-                                            ? Icons.swap_horiz
-                                            : Icons.low_priority,
-                                    color: priority == "High"
-                                        ? Colors.red
-                                        : priority == "Medium"
-                                            ? Colors.orange
-                                            : Colors.green,
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(priority),
-                                ],
-                              ),
-                            ))
-                        .toList(),
-                  ),
-                  SizedBox(height: 10),
-                  ListTile(
-                    title: Text("Select Date & Time"),
-                    subtitle: Text(
-                      DateFormat('yyyy-MM-dd HH:mm').format(selectedDate),
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close Dialog
+                      },
+                      icon: Icon(Icons.close, color: Colors.white),
                     ),
-                    onTap: () async {
-                      DateTime? pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: selectedDate,
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(2100),
-                      );
-                      if (pickedDate != null) {
-                        TimeOfDay? pickedTime = await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.fromDateTime(selectedDate),
-                        );
-                        if (pickedTime != null) {
-                          setState(() {
-                            selectedDate = DateTime(
-                              pickedDate.year,
-                              pickedDate.month,
-                              pickedDate.day,
-                              pickedTime.hour,
-                              pickedTime.minute,
-                            );
-                          });
-                        }
-                      }
-                    },
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text("Cancel"),
+                  ],
                 ),
+                Divider(color: Colors.white, thickness: 1),
+                SizedBox(height: 10),
+
+                // Task Name
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Enter The Task Name",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                SizedBox(height: 5),
+                TextField(
+                  controller: taskController,
+                  style: TextStyle(color: Colors.black),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: "e.g., Complete Flutter UI",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 15),
+
+                // Priority & Date Row
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Choose Priority",
+                              style: TextStyle(color: Colors.white)),
+                          SizedBox(height: 5),
+                          DropdownButtonFormField<String>(
+                            value: selectedPriority,
+                            icon: Icon(Icons.arrow_drop_down),
+                            dropdownColor: Colors.white,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onChanged: (value) {
+                              selectedPriority = value!;
+                            },
+                            items: ["High", "Medium", "Low"]
+                                .map((priority) => DropdownMenuItem(
+                                      value: priority,
+                                      child: Text(priority),
+                                    ))
+                                .toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Set Due Date",
+                              style: TextStyle(color: Colors.white)),
+                          SizedBox(height: 5),
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.black,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onPressed: () async {
+                              DateTime? picked = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2023),
+                                lastDate: DateTime(2100),
+                              );
+                              if (picked != null) {
+                                selectedDueDate = picked;
+                              }
+                            },
+                            icon: Icon(Icons.calendar_today, size: 18),
+                            label: Text("Date"),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Divider(color: Colors.white, thickness: 1),
+                SizedBox(height: 10),
+
+                // Add Task Button
                 ElevatedButton(
                   onPressed: () {
-                    if (taskController.text.isNotEmpty) {
-                      addTaskToFirestore(
-                          taskController.text, selectedPriority, selectedDate);
-                      Navigator.pop(context);
+                    if (taskController.text.isEmpty ||
+                        selectedDueDate == null) {
+                      // simple validation
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Please enter all details")),
+                      );
+                      return;
                     }
+
+                    addTaskToFirestore(
+                      taskController.text.trim(),
+                      selectedPriority,
+                      selectedDueDate!,
+                    );
+
+                    Navigator.of(context).pop(); // Close Dialog
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.purple.shade700,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
                   child: Text("Add Task"),
                 ),
               ],
-            );
-          },
+            ),
+          ),
         );
       },
     );
   }
 
-  void toggleTaskStatus(String taskId, bool isChecked) async {
-    String newStatus = isChecked ? "complete" : "pending";
+  // ADD TASK TO FIRESTORE
 
+  void addTaskToFirestore(
+      String task, String priority, DateTime dueDate) async {
+    if (username.isEmpty || userEmail.isEmpty) {
+      fetchUserData();
+    }
+    // Default new tasks to "ToDo"
+    await FirebaseFirestore.instance.collection('tasks').add({
+      'task': task,
+      'priority': priority,
+      'dueDate': dueDate.toIso8601String(),
+      'assignedDate': DateTime.now().toIso8601String(),
+      'username': username,
+      'email': userEmail,
+      'status': "ToDo",
+    });
+  }
+
+  // UPDATE TASK STATUS
+
+  void updateTaskStatus(String taskId, String newStatus) async {
     await FirebaseFirestore.instance.collection('tasks').doc(taskId).update({
       'status': newStatus,
     });
-
-    checkForCompletedTasks();
+    checkForCompletedTasks(); // so the trash icon can appear/disappear
   }
 
+  // ---------------------------------------------------------------------------
+  // CHECK & DELETE COMPLETED (RENAMED TO "DONE") TASKS
+  // ---------------------------------------------------------------------------
   void checkForCompletedTasks() async {
+    // If you want "Done" tasks to show in the trash icon:
     var snapshot = await FirebaseFirestore.instance
         .collection('tasks')
         .where('email', isEqualTo: userEmail)
-        .where('status', isEqualTo: "complete")
+        .where('status', isEqualTo: "Done")
         .get();
 
     setState(() {
@@ -173,10 +256,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void deleteCompletedTasks() async {
+    // This will set tasks with "Done" to "deleted"
     var snapshot = await FirebaseFirestore.instance
         .collection('tasks')
         .where('email', isEqualTo: userEmail)
-        .where('status', isEqualTo: "complete")
+        .where('status', isEqualTo: "Done")
         .get();
 
     for (var doc in snapshot.docs) {
@@ -209,21 +293,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void addTaskToFirestore(
-      String task, String priority, DateTime dateTime) async {
-    if (username.isEmpty || userEmail.isEmpty) {
-      fetchUserData(); // Fetch user data again
-    }
-    await FirebaseFirestore.instance.collection('tasks').add({
-      'task': task,
-      'priority': priority,
-      'dateTime': dateTime.toIso8601String(),
-      'username': username,
-      'email': userEmail,
-      'status': "pending", // Default status
-    });
-  }
-
+  // ---------------------------------------------------------------------------
+  // WIDGET BUILD
+  // ---------------------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -234,6 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Greeting
             Container(
               margin: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
@@ -251,6 +324,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(fontSize: 16, color: Colors.grey)),
             ),
             SizedBox(height: 10),
+
+            // Search
             Container(
               margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: TextField(
@@ -263,29 +338,117 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SizedBox(height: 10),
+
+            // Status Legend
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                children: [
+                  Text("Task Status: - "),
+                  Row(
+                    children: [
+                      CircleAvatar(radius: 5, backgroundColor: Colors.yellow),
+                      SizedBox(width: 5),
+                      Text("ToDo"),
+                    ],
+                  ),
+                  SizedBox(width: 10),
+                  Row(
+                    children: [
+                      CircleAvatar(radius: 5, backgroundColor: Colors.blue),
+                      SizedBox(width: 5),
+                      Text("In Progress"),
+                    ],
+                  ),
+                  SizedBox(width: 10),
+                  Row(
+                    children: [
+                      CircleAvatar(radius: 5, backgroundColor: Colors.green),
+                      SizedBox(width: 5),
+                      Text("Done"),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+
+            // TASK LIST
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('tasks')
                     .where('email', isEqualTo: userEmail)
-                    .where('status', whereIn: [
-                  "pending",
-                ]).snapshots(),
+                    // Show all three statuses instead of just "pending"
+                    .where('status',
+                        whereIn: ["ToDo", "InProgress", "Done"]).snapshots(),
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData)
+                  if (!snapshot.hasData) {
                     return Center(child: CircularProgressIndicator());
+                  }
 
                   var tasks = snapshot.data!.docs;
 
                   return ListView(
                     children: tasks.map((task) {
                       var data = task.data() as Map<String, dynamic>;
-                      bool isCompleted = data['status'] == "complete";
+                      String currentStatus = data['status'] ?? 'ToDo';
+
+                      // Parse assignedDate & dueDate (both stored as ISO strings)
+                      DateTime? assignedDt;
+                      DateTime? dueDt;
+                      try {
+                        assignedDt = DateTime.parse(data['assignedDate']);
+                      } catch (_) {}
+                      try {
+                        dueDt = DateTime.parse(data['dueDate']);
+                      } catch (_) {}
+
+                      // Format them
+                      String assignedDateStr = assignedDt == null
+                          ? 'N/A'
+                          : DateFormat('dd/MM/yyyy').format(assignedDt);
+                      String dueDateStr = dueDt == null
+                          ? 'N/A'
+                          : DateFormat('dd/MM/yyyy').format(dueDt);
+
+                      // Priority arrow
+                      IconData priorityIcon;
+                      switch (
+                          (data['priority'] ?? '').toString().toLowerCase()) {
+                        case 'high':
+                          priorityIcon = Icons.arrow_upward;
+                          break;
+                        case 'low':
+                          priorityIcon = Icons.arrow_downward;
+                          break;
+                        default:
+                          // For "Medium" or anything else
+                          priorityIcon = Icons.drag_handle;
+                          break;
+                      }
+
+                      // Status-based text color
+                      Color statusColor;
+                      switch (data['status']) {
+                        case 'InProgress':
+                          statusColor = Colors.blue;
+                          break;
+                        case 'Done':
+                          statusColor = Colors.green;
+                          break;
+                        case 'ToDo':
+                        default:
+                          statusColor = Colors.yellow;
+                      }
+
+                      // Task name
+                      final String taskName = data['task'] ?? 'No Task';
 
                       return Container(
                         margin:
                             EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                        padding: EdgeInsets.all(2),
+                        padding: EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border:
@@ -299,25 +462,133 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ],
                         ),
-                        child: ListTile(
-                          title: Text(
-                            data['task'] ?? 'No Task',
-                            style: TextStyle(
-                              decoration: isCompleted
-                                  ? TextDecoration.lineThrough
-                                  : TextDecoration.none,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Top row: Task Name + Priority + 3-dots
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // Task Name
+                                Expanded(
+                                  child: Text(
+                                    taskName,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: statusColor,
+                                    ),
+                                  ),
+                                ),
+                                // Priority label + arrow
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Priority",
+                                      style: TextStyle(
+                                        color: Colors.purple.shade900,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(width: 5),
+                                    Icon(priorityIcon,
+                                        color:
+                                            priorityIcon == Icons.arrow_upward
+                                                ? Colors.red
+                                                : (priorityIcon ==
+                                                        Icons.arrow_downward
+                                                    ? Colors.grey
+                                                    : Colors.orange)),
+                                  ],
+                                ),
+
+                                // 3 dots (popup menu)
+                                PopupMenuButton<String>(
+                                  onSelected: (value) {
+                                    // Update status in Firestore
+                                    updateTaskStatus(task.id, value);
+                                  },
+                                  itemBuilder: (context) => [
+                                    // A disabled heading
+                                    PopupMenuItem<String>(
+                                      enabled: false,
+                                      child: Text(
+                                        "Set Task Status",
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    // ToDo
+                                    PopupMenuItem<String>(
+                                      value: 'ToDo',
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.radio_button_checked,
+                                            color: (currentStatus == 'ToDo')
+                                                ? Colors.yellow
+                                                : Colors.grey,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text('To Do'),
+                                        ],
+                                      ),
+                                    ),
+                                    // InProgress
+                                    PopupMenuItem<String>(
+                                      value: 'InProgress',
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.radio_button_checked,
+                                            color:
+                                                (currentStatus == 'InProgress')
+                                                    ? Colors.blue
+                                                    : Colors.grey,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text('In Progress'),
+                                        ],
+                                      ),
+                                    ),
+                                    // Done
+                                    PopupMenuItem<String>(
+                                      value: 'Done',
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.radio_button_checked,
+                                            color: (currentStatus == 'Done')
+                                                ? Colors.green
+                                                : Colors.grey,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text('Done'),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                  icon: Icon(Icons.more_vert),
+                                ),
+                              ],
                             ),
-                          ),
-                          subtitle: Text(
-                              "Priority: ${data['priority']} | ${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(data['dateTime']))}"),
-                          trailing: Checkbox(
-                            value: isCompleted,
-                            onChanged: (bool? newValue) {
-                              if (newValue != null) {
-                                toggleTaskStatus(task.id, newValue);
-                              }
-                            },
-                          ),
+                            SizedBox(height: 5),
+                            // Second row: Assigned Date & Due Date
+                            Row(
+                              children: [
+                                Text(
+                                  "Assigned Date: $assignedDateStr",
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                                SizedBox(width: 20),
+                                Text(
+                                  "Due Date: $dueDateStr",
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       );
                     }).toList(),
@@ -328,6 +599,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+
+      // FAB
       floatingActionButton: Transform.translate(
         offset: Offset(0, 35),
         child: Container(
@@ -344,10 +617,17 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomNavBar(
-        hasCompletedTasks: hasCompletedTasks,
-        onTrashClick: showDeleteConfirmationDialog,
-      ),
+
+      // Bottom Navigation
+      bottomNavigationBar: BottomNavBar(onHistoryTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => HistoryScreen(
+                    userEmail: userEmail,
+                  )),
+        );
+      }),
     );
   }
 }

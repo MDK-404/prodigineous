@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:prodigenius/services/get_service_key.dart';
+import 'package:prodigenious/services/get_service_key.dart';
 import '../services/auth_service.dart';
 
 class AuthViewModel with ChangeNotifier {

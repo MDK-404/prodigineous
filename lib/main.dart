@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:prodigenius/view/forgot_password_screen.dart';
-import 'package:prodigenius/view/home_screen.dart';
-import 'package:prodigenius/viewmodel/auth_view_model.dart';
+import 'package:prodigenious/view/forgot_password_screen.dart';
+import 'package:prodigenious/view/home_screen.dart';
+import 'package:prodigenious/viewmodel/auth_view_model.dart';
 import 'package:provider/provider.dart';
 import 'view/splash_screen.dart'; // Import SplashScreen
 import 'view/signup_screen.dart';
