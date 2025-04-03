@@ -278,7 +278,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
         activeScreen: "history",
         onHomeTap: _onHomeTap,
         onRefreshTap: () {},
-        onNotificationTap: () {},
+        onNotificationTap: () {
+          Navigator.pushNamed(context, '/notifications');
+        },
         onHistoryTap: () {},
       ),
     );

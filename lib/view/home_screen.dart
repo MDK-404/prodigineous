@@ -357,7 +357,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
         onNotificationTap: () =>
-            {Navigator.pushNamed(context, '/notifications')},
+            {Navigator.pushReplacementNamed(context, '/notifications')},
       ),
     );
   }
