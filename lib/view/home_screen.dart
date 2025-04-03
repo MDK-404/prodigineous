@@ -17,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String username = "";
   String userEmail = "";
 
-  bool hasCompletedTasks = false; // Track completed tasks
+  bool hasCompletedTasks = false;
 
   @override
   void initState() {
@@ -120,13 +120,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: 10),
 
-            // TASK LIST
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('tasks')
                     .where('email', isEqualTo: userEmail)
-                    // Show all three statuses instead of just "pending"
                     .where('status',
                         whereIn: ["ToDo", "InProgress", "Done"]).snapshots(),
                 builder: (context, snapshot) {
@@ -141,7 +139,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       var data = task.data() as Map<String, dynamic>;
                       String currentStatus = data['status'] ?? 'ToDo';
 
-                      // Parse assignedDate & dueDate (both stored as ISO strings)
                       DateTime? assignedDt;
                       DateTime? dueDt;
                       try {
@@ -151,7 +148,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         dueDt = DateTime.parse(data['dueDate']);
                       } catch (_) {}
 
-                      // Format them
                       String assignedDateStr = assignedDt == null
                           ? 'N/A'
                           : DateFormat('dd/MM/yyyy').format(assignedDt);
@@ -159,7 +155,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           ? 'N/A'
                           : DateFormat('dd/MM/yyyy').format(dueDt);
 
-                      // Priority arrow
                       IconData priorityIcon;
                       switch (
                           (data['priority'] ?? '').toString().toLowerCase()) {
@@ -170,12 +165,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           priorityIcon = Icons.arrow_downward;
                           break;
                         default:
-                          // For "Medium" or anything else
                           priorityIcon = Icons.drag_handle;
                           break;
                       }
 
-                      // Status-based text color
                       Color statusColor;
                       switch (data['status']) {
                         case 'InProgress':
@@ -189,7 +182,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           statusColor = Colors.yellow;
                       }
 
-                      // Task name
                       final String taskName = data['task'] ?? 'No Task';
 
                       return Container(
@@ -212,11 +204,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Top row: Task Name + Priority + 3-dots
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // Task Name
                                 Expanded(
                                   child: Text(
                                     taskName,
@@ -227,7 +217,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                 ),
-                                // Priority label + arrow
                                 Row(
                                   children: [
                                     Text(
@@ -248,15 +237,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     : Colors.orange)),
                                   ],
                                 ),
-
-                                // 3 dots (popup menu)
                                 PopupMenuButton<String>(
                                   onSelected: (value) {
-                                    // Update status in Firestore
                                     updateTaskStatus(task.id, value);
                                   },
                                   itemBuilder: (context) => [
-                                    // A disabled heading
                                     PopupMenuItem<String>(
                                       enabled: false,
                                       child: Text(
@@ -266,7 +251,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ),
-                                    // ToDo
                                     PopupMenuItem<String>(
                                       value: 'ToDo',
                                       child: Row(
@@ -282,7 +266,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ],
                                       ),
                                     ),
-                                    // InProgress
                                     PopupMenuItem<String>(
                                       value: 'InProgress',
                                       child: Row(
@@ -299,7 +282,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ],
                                       ),
                                     ),
-                                    // Done
                                     PopupMenuItem<String>(
                                       value: 'Done',
                                       child: Row(
@@ -321,7 +303,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                             SizedBox(height: 5),
-                            // Second row: Assigned Date & Due Date
                             Row(
                               children: [
                                 Text(
@@ -346,8 +327,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-
-      // FAB
       floatingActionButton: Transform.translate(
         offset: Offset(0, 35),
         child: Container(
@@ -355,8 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
           width: 70,
           child: FloatingActionButton(
             onPressed: () {
-              showAddTaskDialog(context, username,
-                  userEmail); // Correct way to pass arguments
+              showAddTaskDialog(context, username, userEmail);
             },
             backgroundColor: Colors.purple,
             shape: CircleBorder(
@@ -367,18 +345,20 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
-      // Bottom Navigation
-      bottomNavigationBar: BottomNavBar(onHistoryTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => HistoryScreen(
-                    userEmail: userEmail,
-                    username: username,
-                  )),
-        );
-      }),
+      bottomNavigationBar: BottomNavBar(
+        onHistoryTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => HistoryScreen(
+                      userEmail: userEmail,
+                      username: username,
+                    )),
+          );
+        },
+        onNotificationTap: () =>
+            {Navigator.pushNamed(context, '/notifications')},
+      ),
     );
   }
 }

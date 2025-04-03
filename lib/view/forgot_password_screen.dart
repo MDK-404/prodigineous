@@ -52,10 +52,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Align(
-                  alignment: Alignment.topCenter, // Logo ko bilkul uper rakha
+                  alignment: Alignment.topCenter,
                   child: Padding(
-                    padding: const EdgeInsets.only(
-                        top: 40), // Uper space adjust kiya
+                    padding: const EdgeInsets.only(top: 40),
                     child: Image.asset('assets/logo.png', height: 150),
                   ),
                 ),
@@ -103,8 +102,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed:
-                            _handleResetPassword, // Button ko function se bind kiya
+                        onPressed: _handleResetPassword,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFF9333EA),
                           shape: RoundedRectangleBorder(
@@ -123,7 +121,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           const Text("Remember your password? "),
                           GestureDetector(
                             onTap: () {
-                              Navigator.pop(context); // Back to login
+                              Navigator.pop(context);
                             },
                             child: const Text(
                               "Login",

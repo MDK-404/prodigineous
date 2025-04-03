@@ -177,16 +177,18 @@ void showAddTaskDialog(
                         title: "Task Reminder",
                         body: "Your task '$taskTitle ' is due in 2 days!",
                         scheduledDate: notificationDate1,
+                        userEmail: userEmail,
                       );
                     }
 
                     if (notificationDate2.isAfter(now)) {
                       await NotificationService.scheduleNotification(
-                        id: (DateTime.now().millisecondsSinceEpoch ~/ 1000) + 1,
-                        title: "Task Reminder",
-                        body: "Your task '$taskTitle' is due tomorrow!",
-                        scheduledDate: notificationDate2,
-                      );
+                          id: (DateTime.now().millisecondsSinceEpoch ~/ 1000) +
+                              1,
+                          title: "Task Reminder",
+                          body: "Your task '$taskTitle' is due tomorrow!",
+                          scheduledDate: notificationDate2,
+                          userEmail: userEmail);
                     }
                   }
                   Navigator.of(context).pop();

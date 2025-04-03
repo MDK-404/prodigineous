@@ -47,14 +47,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pop(context); // Close the dialog
+              Navigator.pop(context);
             },
             child: Text("Cancel"),
           ),
           TextButton(
             onPressed: () async {
-              await clearHistory(); // Clear the history
-              Navigator.pop(context); // Close the dialog
+              await clearHistory();
+              Navigator.pop(context);
             },
             child: Text("Clear"),
           ),
@@ -84,28 +84,27 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     color: Color(0xFF2E3A59),
                   ),
                 ),
-                Spacer(), // This will push the button to the end of the row
+                Spacer(),
                 ElevatedButton.icon(
                   onPressed: _showClearHistoryDialog,
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: Color(0xFF945FD4),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                          10), // Adjust the border radius here
-                    ), // Text color
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                   icon: Icon(
                     Icons.delete,
                     color: Colors.white,
-                  ), // Icon for the button
+                  ),
                   label: Text(
                     "Clear History",
                     style: GoogleFonts.poppins(
-                      fontSize: 15, // Font size
-                      fontWeight: FontWeight.w500, // Font weight (optional)
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
                     ),
-                  ), // Button text
+                  ),
                 ),
               ],
             ),
@@ -120,7 +119,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 ),
               ),
             ),
-            //const SizedBox(height: 2),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -139,10 +137,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
-                    .collection('history') // Listen to the 'history' collection
-                    .where('email',
-                        isEqualTo:
-                            widget.userEmail) // Filter tasks by user email
+                    .collection('history')
+                    .where('email', isEqualTo: widget.userEmail)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
@@ -268,9 +264,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           height: 70,
           width: 70,
           child: FloatingActionButton(
-            onPressed: () {
-              // Open the add task dialog
-            },
+            onPressed: () {},
             backgroundColor: Colors.purple,
             shape: CircleBorder(
               side: BorderSide(color: Colors.white, width: 5),

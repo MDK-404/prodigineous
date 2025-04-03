@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -80,6 +81,7 @@ class NotificationService {
     required String title,
     required String body,
     required DateTime scheduledDate,
+    required String userEmail,
   }) async {
     tz.initializeTimeZones();
 
@@ -97,11 +99,20 @@ class NotificationService {
           priority: Priority.high,
         ),
       ),
-      androidScheduleMode:
-          AndroidScheduleMode.exactAllowWhileIdle, // Required in v19
-      matchDateTimeComponents: DateTimeComponents
-          .dateAndTime, // ✅ Remove uiLocalNotificationDateInterpretation
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.dateAndTime,
     );
+    try {
+      await FirebaseFirestore.instance.collection('notifications').add({
+        'title': title,
+        'body': body,
+        'scheduledDate': scheduledDate,
+        'email': userEmail,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      print("Error saving notification to Firestore: $e");
+    }
   }
 
   static Future<void> cancelNotification(int id) async {

@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:prodigenious/services/notificaiton_service.dart';
 import 'package:prodigenious/view/forgot_password_screen.dart';
 import 'package:prodigenious/view/home_screen.dart';
+import 'package:prodigenious/view/notification_scree.dart';
 import 'package:prodigenious/viewmodel/auth_view_model.dart';
 import 'package:provider/provider.dart';
 import 'view/splash_screen.dart'; // Import SplashScreen
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
           '/login': (context) => LoginScreen(),
           '/home': (context) => HomeScreen(),
           '/forgot_password': (context) => ForgotPasswordScreen(),
+          '/notifications': (context) => NotificationsScreen(),
         },
       ),
     );
