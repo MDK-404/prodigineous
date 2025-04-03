@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:prodigenious/services/notificaiton_service.dart';
 import 'package:prodigenious/view/forgot_password_screen.dart';
 import 'package:prodigenious/view/home_screen.dart';
 import 'package:prodigenious/viewmodel/auth_view_model.dart';
@@ -11,6 +12,7 @@ import 'view/login_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await requestExactAlarmPermission();
   runApp(MyApp());
 }
 

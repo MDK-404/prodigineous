@@ -131,7 +131,6 @@ class BottomNavBar extends StatelessWidget {
                   _buildNavItem(
                     icon: Icons.home,
                     label: "Home",
-                    // If activeScreen == "home", highlight with amber, else white
                     iconColor:
                         (activeScreen == "home") ? Colors.amber : Colors.white,
                     onTap: onHomeTap,
@@ -148,7 +147,7 @@ class BottomNavBar extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 50),
+            const SizedBox(width: 55),
             // Right side icons
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -162,7 +161,7 @@ class BottomNavBar extends StatelessWidget {
                         : Colors.white,
                     onTap: onNotificationTap,
                   ),
-                  const SizedBox(width: 30),
+                  const SizedBox(width: 20),
                   _buildNavItem(
                     icon: Icons.delete,
                     label: "History",

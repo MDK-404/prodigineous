@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:prodigenious/widgets/add_task_dialog.dart';
 import 'package:prodigenious/widgets/custom_appbar.dart';
 import 'package:prodigenious/widgets/navigation_bar.dart';
 
 class HistoryScreen extends StatefulWidget {
   final String userEmail;
-  final String username; // ADD THIS
+  final String username;
 
   const HistoryScreen({
     Key? key,
     required this.userEmail,
-    required this.username, // ADD THIS
+    required this.username,
   }) : super(key: key);
 
   @override
@@ -20,10 +20,47 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
-  // void showAddTaskDialog() {}
-
   void _onHomeTap() {
-    Navigator.pop(context);
+    Navigator.popAndPushNamed(context, '/home');
+  }
+
+  Future<void> clearHistory() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('history')
+        .where('email', isEqualTo: widget.userEmail)
+        .get();
+
+    for (var doc in snapshot.docs) {
+      await FirebaseFirestore.instance
+          .collection('history')
+          .doc(doc.id)
+          .delete();
+    }
+  }
+
+  void _showClearHistoryDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Clear History"),
+        content: Text("Are you sure you want to clear all history tasks?"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close the dialog
+            },
+            child: Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () async {
+              await clearHistory(); // Clear the history
+              Navigator.pop(context); // Close the dialog
+            },
+            child: Text("Clear"),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -47,66 +84,81 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     color: Color(0xFF2E3A59),
                   ),
                 ),
+                Spacer(), // This will push the button to the end of the row
+                ElevatedButton.icon(
+                  onPressed: _showClearHistoryDialog,
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Color(0xFF945FD4),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          10), // Adjust the border radius here
+                    ), // Text color
+                  ),
+                  icon: Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                  ), // Icon for the button
+                  label: Text(
+                    "Clear History",
+                    style: GoogleFonts.poppins(
+                      fontSize: 15, // Font size
+                      fontWeight: FontWeight.w500, // Font weight (optional)
+                    ),
+                  ), // Button text
+                ),
               ],
             ),
             const SizedBox(height: 10),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Previous Tasks can be found here",
-                style: TextStyle(fontSize: 14, color: Colors.black87),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Previous Tasks can be found here",
+                  style: TextStyle(fontSize: 14, color: Colors.black87),
+                ),
               ),
             ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                _coloredDot(Colors.green),
-                SizedBox(width: 4),
-                Text("Done Task"),
-                SizedBox(width: 20),
-                _coloredDot(Colors.red),
-                SizedBox(width: 4),
-                Text("Overdue Task"),
-              ],
+            //const SizedBox(height: 2),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  _coloredDot(Colors.green),
+                  SizedBox(width: 4),
+                  Text("Completed Task"),
+                  SizedBox(width: 20),
+                  _coloredDot(Colors.red),
+                  SizedBox(width: 4),
+                  Text("Terminated Task"),
+                ],
+              ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 4),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
-                    .collection('tasks')
-                    .where('email', isEqualTo: widget.userEmail)
+                    .collection('history') // Listen to the 'history' collection
+                    .where('email',
+                        isEqualTo:
+                            widget.userEmail) // Filter tasks by user email
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  final now = DateTime.now();
                   final docs = snapshot.data!.docs;
 
-                  final historyTasks = docs.where((doc) {
-                    final data = doc.data() as Map<String, dynamic>;
-
-                    DateTime? dueDate;
-                    if (data['dueDate'] != null) {
-                      try {
-                        dueDate = DateTime.parse(data['dueDate']);
-                      } catch (_) {}
-                    }
-
-                    if (dueDate == null) return false;
-
-                    return dueDate.isBefore(now);
-                  }).toList();
-
-                  if (historyTasks.isEmpty) {
+                  if (docs.isEmpty) {
                     return const Center(
                       child: Text("No history tasks found."),
                     );
                   }
 
                   return ListView(
-                    children: historyTasks.map((doc) {
+                    children: docs.map((doc) {
                       final data = doc.data() as Map<String, dynamic>;
                       final String taskName = data['task'] ?? 'No Task';
                       final String status = data['status'] ?? 'unknown';
@@ -217,8 +269,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           width: 70,
           child: FloatingActionButton(
             onPressed: () {
-              showAddTaskDialog(context, widget.userEmail,
-                  widget.username); // Correct way to pass arguments
+              // Open the add task dialog
             },
             backgroundColor: Colors.purple,
             shape: CircleBorder(

@@ -37,25 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void addTaskToFirestore(
-      String task, String priority, DateTime dueDate) async {
-    if (username.isEmpty || userEmail.isEmpty) {
-      fetchUserData();
-    }
-    // Default new tasks to "ToDo"
-    await FirebaseFirestore.instance.collection('tasks').add({
-      'task': task,
-      'priority': priority,
-      'dueDate': dueDate.toIso8601String(),
-      'assignedDate': DateTime.now().toIso8601String(),
-      'username': username,
-      'email': userEmail,
-      'status': "ToDo",
-    });
-  }
-
-  // UPDATE TASK STATUS
-
   void updateTaskStatus(String taskId, String newStatus) async {
     await FirebaseFirestore.instance.collection('tasks').doc(taskId).update({
       'status': newStatus,

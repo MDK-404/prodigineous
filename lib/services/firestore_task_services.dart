@@ -12,3 +12,12 @@ Future<void> addTaskToFirestore(String task, String priority, DateTime dueDate,
     'status': "ToDo",
   });
 }
+
+Future<void> moveTaskToHistory(
+    String taskId, Map<String, dynamic> taskData) async {
+  // Add task to history collection
+  await FirebaseFirestore.instance
+      .collection('history')
+      .doc(taskId)
+      .set(taskData);
+}

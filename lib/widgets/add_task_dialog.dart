@@ -1,6 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:prodigenious/services/firestore_task_services.dart';
+import 'package:prodigenious/services/notificaiton_service.dart';
 
 void showAddTaskDialog(
     BuildContext context, String username, String userEmail) {
@@ -143,13 +144,14 @@ void showAddTaskDialog(
 
               // Add Task Button
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (taskController.text.isEmpty || selectedDueDate == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text("Please enter all details")),
                     );
                     return;
                   }
+                  String taskTitle = taskController.text.trim();
 
                   addTaskToFirestore(
                     taskController.text.trim(),
@@ -158,7 +160,35 @@ void showAddTaskDialog(
                     username,
                     userEmail,
                   );
+                  if (selectedDueDate != null) {
+                    DateTime now = DateTime.now();
+                    DateTime notificationDate1 = selectedDueDate!
+                        .subtract(Duration(days: 2)); // 2 din pehle
+                    DateTime notificationDate2 = selectedDueDate!
+                        .subtract(Duration(days: 1)); // 1 din pehle
 
+                    if (notificationDate1.isAfter(now)) {
+                      if (kDebugMode) {
+                        print(
+                            "🔔 Scheduling Notification for: $notificationDate1");
+                      }
+                      await NotificationService.scheduleNotification(
+                        id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+                        title: "Task Reminder",
+                        body: "Your task '$taskTitle ' is due in 2 days!",
+                        scheduledDate: notificationDate1,
+                      );
+                    }
+
+                    if (notificationDate2.isAfter(now)) {
+                      await NotificationService.scheduleNotification(
+                        id: (DateTime.now().millisecondsSinceEpoch ~/ 1000) + 1,
+                        title: "Task Reminder",
+                        body: "Your task '$taskTitle' is due tomorrow!",
+                        scheduledDate: notificationDate2,
+                      );
+                    }
+                  }
                   Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
