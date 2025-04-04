@@ -20,3 +20,10 @@ Future<void> moveTaskToHistory(
       .doc(taskId)
       .set(taskData);
 }
+
+Future<void> markNotificationAsDelivered(String notificationId) async {
+  await FirebaseFirestore.instance
+      .collection('notifications')
+      .doc(notificationId)
+      .update({'isDelivered': true});
+}

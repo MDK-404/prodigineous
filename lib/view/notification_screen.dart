@@ -41,6 +41,27 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
+  // clear single notificaiton
+  Future<void> clearNotification(String notificationId) async {
+    await FirebaseFirestore.instance
+        .collection('notifications')
+        .doc(notificationId)
+        .delete();
+  }
+
+  // clear all notifcaions
+  Future<void> clearAllNotifications() async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('notifications')
+        .where('email', isEqualTo: userEmail)
+        .where('isDelivered', isEqualTo: true)
+        .get();
+
+    for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+      await doc.reference.delete();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,6 +72,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               stream: FirebaseFirestore.instance
                   .collection('notifications')
                   .where('email', isEqualTo: userEmail)
+                  .where('isDelivered', isEqualTo: true)
                   .orderBy('timestamp', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
@@ -64,25 +86,54 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   return Center(child: Text('No notifications available.'));
                 }
 
-                return ListView.builder(
-                  itemCount: notifications.length,
-                  itemBuilder: (context, index) {
-                    final data =
-                        notifications[index].data() as Map<String, dynamic>;
-                    final String title = data['title'];
-                    final String body = data['body'];
-                    final Timestamp timestamp = data['timestamp'];
-                    final DateTime dateTime = timestamp.toDate();
+                return Column(children: [
+                  // 📌 Buttons for Clearing Notifications
+                  Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Notifications",
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.clear_all, color: Colors.red),
+                              onPressed: () async {
+                                await clearAllNotifications();
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
 
-                    return ListTile(
-                      title: Text(title),
-                      subtitle: Text(body),
-                      trailing:
-                          Text(DateFormat('yyyy-MM-dd HH:mm').format(dateTime)),
-                      onTap: () {},
-                    );
-                  },
-                );
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: notifications.length,
+                      itemBuilder: (context, index) {
+                        final data =
+                            notifications[index].data() as Map<String, dynamic>;
+                        final String title = data['title'];
+                        final String body = data['body'];
+                        final Timestamp timestamp = data['timestamp'];
+                        final DateTime dateTime = timestamp.toDate();
+
+                        return ListTile(
+                          title: Text(title),
+                          subtitle: Text(body),
+                          trailing: Text(
+                              DateFormat('yyyy-MM-dd HH:mm').format(dateTime)),
+                          onTap: () {},
+                        );
+                      },
+                    ),
+                  ),
+                ]);
               },
             ),
       floatingActionButton: Transform.translate(

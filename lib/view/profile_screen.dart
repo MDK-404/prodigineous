@@ -134,7 +134,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       body: _loading
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              // Wrap the body in a SingleChildScrollView
               child: Padding(
                 padding: EdgeInsets.all(20),
                 child: Column(

@@ -7,7 +7,6 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  /// **Signup with Email & Password**
   Future<User?> signUpWithEmail({
     required String email,
     required String username,
@@ -120,12 +119,10 @@ class AuthService {
       User? user = userCredential.user;
 
       if (user != null) {
-        // Check if the user already exists in Firestore
         DocumentSnapshot userDoc =
             await _firestore.collection('users').doc(user.uid).get();
 
         if (!userDoc.exists) {
-          // Add user to Firestore if not already present
           await _firestore.collection('users').doc(user.uid).set({
             'email': user.email,
             'userId': user.uid,
@@ -141,7 +138,6 @@ class AuthService {
     }
   }
 
-  /// **Reset Password**
   Future<void> resetPassword(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
@@ -153,7 +149,6 @@ class AuthService {
     }
   }
 
-  /// **Logout User**
   Future<void> signOut() async {
     await _auth.signOut();
     await GoogleSignIn().signOut();

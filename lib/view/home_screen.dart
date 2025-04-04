@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:prodigenious/services/notificaiton_service.dart';
 import 'package:prodigenious/view/task_history.dart';
 import 'package:prodigenious/widgets/add_task_dialog.dart';
 import 'package:prodigenious/widgets/custom_appbar.dart';
@@ -22,6 +23,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    Future.microtask(() {
+      NotificationService.markDeliveredNotificationsIfTimePassed();
+    });
     fetchUserData();
   }
 

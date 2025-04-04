@@ -1,39 +1,29 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:prodigenious/services/firestore_task_services.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
 
 Future<void> requestExactAlarmPermission() async {
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-
   if (Platform.isAndroid) {
-    final AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('app_icon');
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
 
-    final InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
+    final androidImplementation =
+        flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
 
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    if (androidImplementation != null) {
+      bool? isExactAlarmPermissionGranted =
+          await androidImplementation.areNotificationsEnabled();
 
-    if (await flutterLocalNotificationsPlugin
-            .resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin>() !=
-        null) {
-      // Request permission for exact alarms if running on Android 12+
-      final bool? isExactAlarmPermissionGranted =
-          await flutterLocalNotificationsPlugin
-              .resolvePlatformSpecificImplementation<
-                  AndroidFlutterLocalNotificationsPlugin>()!
-              .areNotificationsEnabled();
-
-      if (!isExactAlarmPermissionGranted!) {
-        await flutterLocalNotificationsPlugin
-            .resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin>()!
-            .requestExactAlarmsPermission();
+      if (isExactAlarmPermissionGranted == false) {
+        await androidImplementation.requestExactAlarmsPermission();
+        print("⏰ Exact Alarm Permission Requested");
       }
     }
   }
@@ -43,83 +33,110 @@ class NotificationService {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  static Future<void> initialize() async {
-    const AndroidInitializationSettings initializationSettingsAndroid =
+  static Future<void> initNotification() async {
+    tz.initializeTimeZones();
+
+    const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-      android: initializationSettingsAndroid,
+    const DarwinInitializationSettings iosSettings =
+        DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
     );
 
-    await _notificationsPlugin.initialize(initializationSettings);
+    const InitializationSettings settings = InitializationSettings(
+      android: androidSettings,
+      iOS: iosSettings,
+    );
+
+    await _notificationsPlugin.initialize(
+      settings,
+      onDidReceiveNotificationResponse: (NotificationResponse response) async {
+        if (response.payload != null) {
+          var docRef = FirebaseFirestore.instance
+              .collection('notifications')
+              .doc(response.payload);
+
+          await docRef.update({'isDelivered': true});
+        }
+      },
+    );
   }
 
-  static Future<void> showNotification({
-    required int id,
-    required String title,
-    required String body,
-  }) async {
-    const AndroidNotificationDetails androidDetails =
-        AndroidNotificationDetails(
-      'channel_id',
-      'channel_name',
-      channelDescription: 'channel_description',
-      importance: Importance.high,
-      priority: Priority.high,
-      ticker: 'ticker',
-    );
-
-    const NotificationDetails notificationDetails =
-        NotificationDetails(android: androidDetails);
-
-    await _notificationsPlugin.show(id, title, body, notificationDetails);
+  static Future<void> requestNotificationPermission() async {
+    if (Platform.isIOS) {
+      await _notificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+    } else if (Platform.isAndroid) {
+      if (await Permission.notification.isDenied) {
+        await Permission.notification.request();
+      }
+    }
   }
 
   static Future<void> scheduleNotification({
     required int id,
     required String title,
     required String body,
-    required DateTime scheduledDate,
     required String userEmail,
+    required DateTime scheduledDateTime,
   }) async {
-    tz.initializeTimeZones();
+    // Store notification details in Firestore
+    var notificationDoc =
+        await FirebaseFirestore.instance.collection('notifications').add({
+      'title': title,
+      'body': body,
+      'scheduledDate': scheduledDateTime,
+      'email': userEmail,
+      'timestamp': FieldValue.serverTimestamp(),
+      'isDelivered': false, // Initially false
+    });
+    String docId = notificationDoc.id;
 
+    // Schedule the notification
     await _notificationsPlugin.zonedSchedule(
       id,
       title,
       body,
-      tz.TZDateTime.from(scheduledDate, tz.local),
+      tz.TZDateTime.from(scheduledDateTime, tz.local),
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'channel_id',
-          'channel_name',
-          channelDescription: 'channel_description',
-          importance: Importance.high,
+          'main_channel_id',
+          'Main Channel',
+          channelDescription: 'Your app notification channel',
+          importance: Importance.max,
           priority: Priority.high,
         ),
+        iOS: DarwinNotificationDetails(),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.dateAndTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+      payload: docId, // Optional
     );
-    try {
-      await FirebaseFirestore.instance.collection('notifications').add({
-        'title': title,
-        'body': body,
-        'scheduledDate': scheduledDate,
-        'email': userEmail,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-    } catch (e) {
-      print("Error saving notification to Firestore: $e");
+  }
+
+  static Future<void> markDeliveredNotificationsIfTimePassed() async {
+    final now = DateTime.now();
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection('notifications')
+        .where('isDelivered', isEqualTo: false)
+        .get();
+
+    for (var doc in snapshot.docs) {
+      final scheduledDate = (doc['scheduledDate'] as Timestamp).toDate();
+
+      if (scheduledDate.isBefore(now)) {
+        await doc.reference.update({'isDelivered': true});
+      }
     }
-  }
-
-  static Future<void> cancelNotification(int id) async {
-    await _notificationsPlugin.cancel(id);
-  }
-
-  static Future<void> cancelAllNotifications() async {
-    await _notificationsPlugin.cancelAll();
   }
 }

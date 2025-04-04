@@ -78,7 +78,6 @@ class BottomNavBar extends StatelessWidget {
                   _buildNavItem(
                     icon: Icons.delete,
                     label: "History",
-                    // highlight if activeScreen == "history"
                     iconColor: (activeScreen == "history")
                         ? Colors.amber
                         : Colors.white,
