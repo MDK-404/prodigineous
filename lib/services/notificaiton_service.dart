@@ -1,10 +1,8 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:prodigenious/services/firestore_task_services.dart';
+
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
 
@@ -30,6 +28,33 @@ Future<void> requestExactAlarmPermission() async {
 }
 
 class NotificationService {
+  static Stream<int> getUnreadNotificationCount(String userEmail) {
+    return FirebaseFirestore.instance
+        .collection('notifications')
+        .where('email', isEqualTo: userEmail)
+        .where('isTapped', isEqualTo: false)
+        .where('isDelivered', isEqualTo: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
+  }
+
+  static Future<void> markAllAsTapped(String userEmail) async {
+    final query = await FirebaseFirestore.instance
+        .collection('notifications')
+        .where('email', isEqualTo: userEmail)
+        .where('isTapped', isEqualTo: false)
+        .where('isDelivered', isEqualTo: true)
+        .get();
+
+    final batch = FirebaseFirestore.instance.batch();
+
+    for (var doc in query.docs) {
+      batch.update(doc.reference, {'isTapped': true});
+    }
+
+    await batch.commit();
+  }
+
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -59,7 +84,10 @@ class NotificationService {
               .collection('notifications')
               .doc(response.payload);
 
-          await docRef.update({'isDelivered': true});
+          await docRef.update({
+            'isDelivered': true,
+            'isTapped': true,
+          });
         }
       },
     );
@@ -89,7 +117,6 @@ class NotificationService {
     required String userEmail,
     required DateTime scheduledDateTime,
   }) async {
-    // Store notification details in Firestore
     var notificationDoc =
         await FirebaseFirestore.instance.collection('notifications').add({
       'title': title,
@@ -97,7 +124,8 @@ class NotificationService {
       'scheduledDate': scheduledDateTime,
       'email': userEmail,
       'timestamp': FieldValue.serverTimestamp(),
-      'isDelivered': false, // Initially false
+      'isDelivered': false,
+      'isTapped': false,
     });
     String docId = notificationDoc.id;
 
@@ -119,7 +147,7 @@ class NotificationService {
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,
-      payload: docId, // Optional
+      payload: docId,
     );
   }
 

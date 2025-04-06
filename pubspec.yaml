@@ -49,6 +49,7 @@ dependencies:
   timezone: ^0.10.0
   permission_handler: ^11.4.0
   workmanager: ^0.5.2
+  flutter_launcher_icons: ^0.14.3
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +78,8 @@ flutter:
     - assets/logo.png
     - assets/robot.png
     - assets/google_logo.png
+
+   
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

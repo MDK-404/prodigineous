@@ -27,6 +27,10 @@ class _HomeScreenState extends State<HomeScreen> {
       NotificationService.markDeliveredNotificationsIfTimePassed();
     });
     fetchUserData();
+    final userEmail = FirebaseAuth.instance.currentUser?.email;
+    if (userEmail != null) {
+      NotificationService.markAllAsTapped(userEmail);
+    }
   }
 
   void fetchUserData() async {
@@ -349,20 +353,48 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomNavBar(
-        onHistoryTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => HistoryScreen(
-                      userEmail: userEmail,
-                      username: username,
-                    )),
+      bottomNavigationBar: StreamBuilder<int>(
+        stream: NotificationService.getUnreadNotificationCount(userEmail),
+        builder: (context, snapshot) {
+          final unreadCount = snapshot.data ?? 0;
+
+          return BottomNavBar(
+            activeScreen: 'home',
+            unreadNotificationCount: unreadCount,
+            onHistoryTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HistoryScreen(
+                    userEmail: userEmail,
+                    username: username,
+                  ),
+                ),
+              );
+            },
+            onNotificationTap: () {
+              Navigator.pushReplacementNamed(context, '/notifications');
+            },
           );
         },
-        onNotificationTap: () =>
-            {Navigator.pushReplacementNamed(context, '/notifications')},
       ),
+
+      // bottomNavigationBar: BottomNavBar(
+      //       activeScreen: 'HomeScreen',
+      //       onHistoryTap: () {
+      //         Navigator.push(
+      //           context,
+      //           MaterialPageRoute(
+      //               builder: (context) => HistoryScreen(
+      //                     userEmail: userEmail,
+      //                     username: username,
+      //                   )),
+      //         );
+      //       },
+
+      //       onNotificationTap: () =>
+      //           Navigator.pushReplacementNamed(context, '/notifications'),
+      // ),
     );
   }
 }
