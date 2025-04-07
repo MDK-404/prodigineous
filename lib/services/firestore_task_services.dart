@@ -5,12 +5,38 @@ Future<void> addTaskToFirestore(String task, String priority, DateTime dueDate,
   await FirebaseFirestore.instance.collection('tasks').add({
     'task': task,
     'priority': priority,
-    'dueDate': dueDate.toIso8601String(),
-    'assignedDate': DateTime.now().toIso8601String(),
+    'dueDate': Timestamp.fromDate(dueDate),
+    'assignedDate': DateTime.now(),
     'username': username,
     'email': userEmail,
     'status': "ToDo",
   });
+}
+
+Future<void> checkAndMoveTasksToHistory() async {
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final DateTime now = DateTime.now();
+
+  final QuerySnapshot tasksSnapshot = await firestore.collection('tasks').get();
+
+  for (final DocumentSnapshot doc in tasksSnapshot.docs) {
+    final data = doc.data() as Map<String, dynamic>;
+    final Timestamp? dueDateTimestamp = data['dueDate'];
+
+    if (dueDateTimestamp != null) {
+      final DateTime dueDate = dueDateTimestamp.toDate();
+
+      print("Checking task ${doc.id} with due date: $dueDate, now: $now");
+
+      if (dueDate.isBefore(now)) {
+        // Move to 'history' and delete from 'tasks'
+        await firestore.collection('history').doc(doc.id).set(data);
+        await firestore.collection('tasks').doc(doc.id).delete();
+
+        print("Moved task ${doc.id} to history");
+      }
+    }
+  }
 }
 
 Future<void> moveTaskToHistory(

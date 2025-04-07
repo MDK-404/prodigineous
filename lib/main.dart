@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:prodigenious/services/firestore_task_services.dart';
 import 'package:prodigenious/services/notificaiton_service.dart';
 import 'package:prodigenious/view/forgot_password_screen.dart';
 import 'package:prodigenious/view/home_screen.dart';
@@ -56,6 +57,7 @@ void main() async {
   );
 
   runApp(MyApp());
+  checkAndMoveTasksToHistory();
   checkTimeZone();
 }
 

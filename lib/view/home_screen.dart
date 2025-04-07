@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:prodigenious/services/ai_task_prioritizer.dart';
 import 'package:prodigenious/services/notificaiton_service.dart';
 import 'package:prodigenious/view/task_history.dart';
 import 'package:prodigenious/widgets/add_task_dialog.dart';
@@ -46,9 +47,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void updateTaskStatus(String taskId, String newStatus) async {
-    await FirebaseFirestore.instance.collection('tasks').doc(taskId).update({
+    final taskRef = FirebaseFirestore.instance.collection('tasks').doc(taskId);
+
+    final Map<String, dynamic> updateData = {
       'status': newStatus,
-    });
+    };
+
+    if (newStatus == 'Done') {
+      updateData['completedDate'] = FieldValue.serverTimestamp();
+    }
+
+    await taskRef.update(updateData);
   }
 
   @override
@@ -80,7 +89,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: 10),
 
-            // Search
             Container(
               margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: TextField(
@@ -94,7 +102,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: 10),
 
-            // Status Legend
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
@@ -140,22 +147,24 @@ class _HomeScreenState extends State<HomeScreen> {
                     return Center(child: CircularProgressIndicator());
                   }
 
-                  var tasks = snapshot.data!.docs;
+                  var rawTasks = snapshot.data!.docs;
+                  var tasks = AITaskPrioritizer.prioritizeTasks(rawTasks);
 
                   return ListView(
                     children: tasks.map((task) {
                       var data = task.data() as Map<String, dynamic>;
                       String currentStatus = data['status'] ?? 'ToDo';
-
+                      bool isAiPrioritized =
+                          AITaskPrioritizer.isTaskAIPrioritized(task);
                       DateTime? assignedDt;
                       DateTime? dueDt;
                       try {
-                        assignedDt = DateTime.parse(data['assignedDate']);
+                        assignedDt =
+                            (data['assignedDate'] as Timestamp).toDate();
                       } catch (_) {}
                       try {
-                        dueDt = DateTime.parse(data['dueDate']);
+                        dueDt = (data['dueDate'] as Timestamp).toDate();
                       } catch (_) {}
-
                       String assignedDateStr = assignedDt == null
                           ? 'N/A'
                           : DateFormat('dd/MM/yyyy').format(assignedDt);
@@ -216,13 +225,23 @@ class _HomeScreenState extends State<HomeScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
-                                  child: Text(
-                                    taskName,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: statusColor,
-                                    ),
+                                  child: Row(
+                                    children: [
+                                      if (isAiPrioritized)
+                                        Icon(Icons.smart_toy_rounded,
+                                            color: Colors.deepPurple, size: 20),
+                                      if (isAiPrioritized) SizedBox(width: 4),
+                                      Flexible(
+                                        child: Text(
+                                          taskName,
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: statusColor,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Row(
@@ -378,23 +397,6 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
       ),
-
-      // bottomNavigationBar: BottomNavBar(
-      //       activeScreen: 'HomeScreen',
-      //       onHistoryTap: () {
-      //         Navigator.push(
-      //           context,
-      //           MaterialPageRoute(
-      //               builder: (context) => HistoryScreen(
-      //                     userEmail: userEmail,
-      //                     username: username,
-      //                   )),
-      //         );
-      //       },
-
-      //       onNotificationTap: () =>
-      //           Navigator.pushReplacementNamed(context, '/notifications'),
-      // ),
     );
   }
 }
