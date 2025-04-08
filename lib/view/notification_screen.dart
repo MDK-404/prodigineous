@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:prodigenious/services/user_service.dart';
 import 'package:prodigenious/view/task_history.dart';
+import 'package:prodigenious/widgets/add_task_dialog.dart';
 import 'package:prodigenious/widgets/custom_appbar.dart';
 import 'package:prodigenious/widgets/navigation_bar.dart';
 
@@ -169,7 +171,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           height: 70,
           width: 70,
           child: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              if (username != null && userEmail != null) {
+                showAddTaskDialog(context, username!, userEmail!);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("User data is still loading...")),
+                );
+              }
+            },
             backgroundColor: Colors.purple,
             shape: CircleBorder(
               side: BorderSide(color: Colors.white, width: 5),
@@ -181,6 +191,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavBar(
           activeScreen: 'notifications',
+          onScheduledTap: () {
+            Navigator.pushNamed(context, '/scheduled_task_screen');
+          },
           onHistoryTap: () {
             if (userEmail != null && username != null) {
               Navigator.push(

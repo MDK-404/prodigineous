@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class BottomNavBar extends StatelessWidget {
   final VoidCallback onHomeTap;
-  final VoidCallback onRefreshTap;
+  final VoidCallback onScheduledTap;
   final VoidCallback onNotificationTap;
   final VoidCallback onHistoryTap;
   final String activeScreen;
@@ -11,7 +11,7 @@ class BottomNavBar extends StatelessWidget {
   const BottomNavBar({
     Key? key,
     this.onHomeTap = _defaultCallback,
-    this.onRefreshTap = _defaultCallback,
+    this.onScheduledTap = _defaultCallback,
     this.onNotificationTap = _defaultCallback,
     this.onHistoryTap = _defaultCallback,
     this.activeScreen = "home",
@@ -36,10 +36,10 @@ class BottomNavBar extends StatelessWidget {
           ),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: Row(
                 children: [
                   _buildNavItem(
@@ -49,19 +49,19 @@ class BottomNavBar extends StatelessWidget {
                         (activeScreen == "home") ? Colors.amber : Colors.white,
                     onTap: onHomeTap,
                   ),
-                  const SizedBox(width: 30),
+                  const SizedBox(width: 10),
                   _buildNavItem(
-                    icon: Icons.refresh,
-                    label: "Refresh",
-                    iconColor: (activeScreen == "refresh")
+                    icon: Icons.schedule,
+                    label: "Scheduled Tasks",
+                    iconColor: (activeScreen == "scheduled")
                         ? Colors.amber
                         : Colors.white,
-                    onTap: onRefreshTap,
+                    onTap: onScheduledTap,
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 55),
+            const SizedBox(width: 40),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Row(
@@ -75,7 +75,7 @@ class BottomNavBar extends StatelessWidget {
                     onTap: onNotificationTap,
                     count: unreadNotificationCount,
                   ),
-                  const SizedBox(width: 20),
+                  const SizedBox(width: 10),
                   _buildNavItem(
                     icon: Icons.history,
                     label: "History",

@@ -277,7 +277,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
       bottomNavigationBar: BottomNavBar(
         activeScreen: "history",
         onHomeTap: _onHomeTap,
-        onRefreshTap: () {},
+        onScheduledTap: () {
+          Navigator.pushNamed(context, '/scheduled_task_screen');
+        },
         onNotificationTap: () {
           Navigator.pushNamed(context, '/notifications');
         },

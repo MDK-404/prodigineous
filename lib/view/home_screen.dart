@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:prodigenious/services/ai_task_prioritizer.dart';
 import 'package:prodigenious/services/notificaiton_service.dart';
+import 'package:prodigenious/view/scheduled_tasks_screen.dart';
 import 'package:prodigenious/view/task_history.dart';
 import 'package:prodigenious/widgets/add_task_dialog.dart';
 import 'package:prodigenious/widgets/custom_appbar.dart';
@@ -380,6 +381,9 @@ class _HomeScreenState extends State<HomeScreen> {
           return BottomNavBar(
             activeScreen: 'home',
             unreadNotificationCount: unreadCount,
+            onScheduledTap: () {
+              Navigator.pushNamed(context, '/scheduled_task_screen');
+            },
             onHistoryTap: () {
               Navigator.push(
                 context,
