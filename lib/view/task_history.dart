@@ -163,7 +163,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       DateTime? assignedDate;
                       if (data['assignedDate'] != null) {
                         try {
-                          assignedDate = DateTime.parse(data['assignedDate']);
+                          assignedDate =
+                              (data['assignedDate'] as Timestamp).toDate();
                         } catch (_) {}
                       }
 

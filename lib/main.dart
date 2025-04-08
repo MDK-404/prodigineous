@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:prodigenious/services/firestore_task_services.dart';
 import 'package:prodigenious/services/notificaiton_service.dart';
+import 'package:prodigenious/view/dashboard_screen.dart';
 import 'package:prodigenious/view/forgot_password_screen.dart';
 import 'package:prodigenious/view/home_screen.dart';
 import 'package:prodigenious/view/notification_screen.dart';
 import 'package:prodigenious/view/profile_screen.dart';
 import 'package:prodigenious/view/scheduled_tasks_screen.dart';
 import 'package:prodigenious/viewmodel/auth_view_model.dart';
+
 import 'package:provider/provider.dart';
 import 'view/splash_screen.dart';
 import 'view/signup_screen.dart';

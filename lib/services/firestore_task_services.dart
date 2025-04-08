@@ -29,22 +29,19 @@ Future<void> checkAndMoveTasksToHistory() async {
       print("Checking task ${doc.id} with due date: $dueDate, now: $now");
 
       if (dueDate.isBefore(now)) {
-        // Move to 'history' and delete from 'tasks'
-        await firestore.collection('history').doc(doc.id).set(data);
-        await firestore.collection('tasks').doc(doc.id).delete();
-
-        print("Moved task ${doc.id} to history");
+        // Add a flag to prevent duplicate history entries
+        final historyDoc =
+            await firestore.collection('history').doc(doc.id).get();
+        if (!historyDoc.exists) {
+          await firestore.collection('history').doc(doc.id).set({
+            ...data,
+            'movedToHistoryAt': FieldValue.serverTimestamp(),
+          });
+          print("Copied task ${doc.id} to history");
+        }
       }
     }
   }
-}
-
-Future<void> moveTaskToHistory(
-    String taskId, Map<String, dynamic> taskData) async {
-  await FirebaseFirestore.instance
-      .collection('history')
-      .doc(taskId)
-      .set(taskData);
 }
 
 Future<void> markNotificationAsDelivered(String notificationId) async {

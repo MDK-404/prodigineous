@@ -45,8 +45,7 @@ app.*.map.json
 /android/app/release
 lib/firebase_options.dart
 lib/services/get_service_key.dart
-lib/services/ai_task_scheduler.dart
-lib/view/scheduled_tasks_screen.dart
+
 
 firestore-export/
 functions/
