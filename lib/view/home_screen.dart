@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:prodigenious/services/ai_task_prioritizer.dart';
 import 'package:prodigenious/services/notificaiton_service.dart';
-import 'package:prodigenious/view/scheduled_tasks_screen.dart';
 import 'package:prodigenious/view/task_history.dart';
 import 'package:prodigenious/widgets/add_task_dialog.dart';
 import 'package:prodigenious/widgets/custom_appbar.dart';
@@ -71,7 +70,6 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Greeting
             Container(
               margin: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
@@ -89,7 +87,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(fontSize: 16, color: Colors.grey)),
             ),
             SizedBox(height: 10),
-
             Container(
               margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: TextField(
@@ -102,7 +99,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SizedBox(height: 10),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
@@ -135,7 +131,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SizedBox(height: 10),
-
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
