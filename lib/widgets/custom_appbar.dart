@@ -38,7 +38,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: true,
       leading: Builder(
         builder: (context) => IconButton(
-          icon: Icon(Icons.menu),
+          icon: Icon(
+            Icons.menu,
+            color: Colors.white,
+          ),
           onPressed: () {
             showMenu(
               context: context,
@@ -74,6 +77,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                                     TaskDashboardScreen(userEmail: userEmail),
                               ),
                             );
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.insights, color: Colors.white),
+                          title: Text("Insights",
+                              style: TextStyle(color: Colors.white)),
+                          onTap: () {
+                            Navigator.pop(context); // Close menu
+                            Navigator.pushNamed(
+                                context, '/productivity_screen');
                           },
                         ),
                         Divider(color: Colors.white54),

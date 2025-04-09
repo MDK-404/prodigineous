@@ -1,16 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 Future<void> addTaskToFirestore(String task, String priority, DateTime dueDate,
     String username, String userEmail) async {
-  await FirebaseFirestore.instance.collection('tasks').add({
-    'task': task,
-    'priority': priority,
-    'dueDate': Timestamp.fromDate(dueDate),
-    'assignedDate': DateTime.now(),
-    'username': username,
-    'email': userEmail,
-    'status': "ToDo",
-  });
+  final User? user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    await FirebaseFirestore.instance.collection('tasks').add({
+      'task': task,
+      'priority': priority,
+      'dueDate': Timestamp.fromDate(dueDate),
+      'assignedDate': DateTime.now(),
+      'username': username,
+      'email': userEmail,
+      'uid': user.uid, // 👈 Store the UID
+      'status': "ToDo",
+    });
+  } else {
+    // Handle the case when user is not logged in
+    throw Exception("No user is currently logged in.");
+  }
 }
 
 Future<void> checkAndMoveTasksToHistory() async {
@@ -29,7 +37,6 @@ Future<void> checkAndMoveTasksToHistory() async {
       print("Checking task ${doc.id} with due date: $dueDate, now: $now");
 
       if (dueDate.isBefore(now)) {
-        // Add a flag to prevent duplicate history entries
         final historyDoc =
             await firestore.collection('history').doc(doc.id).get();
         if (!historyDoc.exists) {

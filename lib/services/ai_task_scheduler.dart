@@ -10,7 +10,7 @@ class AITaskScheduler {
     List<QueryDocumentSnapshot> medium = [];
     List<QueryDocumentSnapshot> low = [];
 
-    Map<String, List<QueryDocumentSnapshot>> dueDateMap = {};
+    // Map<String, List<QueryDocumentSnapshot>> dueDateMap = {};
 
     for (var task in tasks) {
       var data = task.data() as Map<String, dynamic>;

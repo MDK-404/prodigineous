@@ -2,13 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:prodigenious/services/user_service.dart';
 import 'package:prodigenious/view/task_history.dart';
 import 'package:prodigenious/widgets/add_task_dialog.dart';
 import 'package:prodigenious/widgets/custom_appbar.dart';
 import 'package:prodigenious/widgets/navigation_bar.dart';
 
 class NotificationsScreen extends StatefulWidget {
+  const NotificationsScreen({super.key});
+
   @override
   State<NotificationsScreen> createState() => _NotificationsScreenState();
 }

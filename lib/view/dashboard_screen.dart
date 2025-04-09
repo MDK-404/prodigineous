@@ -9,7 +9,7 @@ import 'package:prodigenious/widgets/task_dashboard_chart.dart';
 class TaskDashboardScreen extends StatefulWidget {
   final String userEmail;
 
-  const TaskDashboardScreen({required this.userEmail});
+  const TaskDashboardScreen({super.key, required this.userEmail});
 
   @override
   State<TaskDashboardScreen> createState() => _TaskDashboardScreenState();
@@ -64,7 +64,7 @@ class _TaskDashboardScreenState extends State<TaskDashboardScreen> {
       if (status != 'Done' && dueDate.isBefore(now)) {
         _terminated++;
       } else if (status == 'Done') {
-        _done++; // count completed in history too
+        _done++;
       }
     }
 
@@ -121,8 +121,7 @@ class _TaskDashboardScreenState extends State<TaskDashboardScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xff945FD4),
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(6), // 🔸 less rounded corners
+                    borderRadius: BorderRadius.circular(6),
                   ),
                 ),
               ),

@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -12,6 +11,8 @@ import 'package:prodigenious/widgets/add_task_dialog.dart';
 import 'package:prodigenious/widgets/navigation_bar.dart';
 
 class ScheduledTasksScreen extends StatefulWidget {
+  const ScheduledTasksScreen({super.key});
+
   @override
   _ScheduledTasksScreenState createState() => _ScheduledTasksScreenState();
 }
@@ -42,8 +43,9 @@ class _ScheduledTasksScreenState extends State<ScheduledTasksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading)
+    if (isLoading) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
 
     return Scaffold(
       appBar: CustomAppBar(),
@@ -151,7 +153,6 @@ class _ScheduledTasksScreenState extends State<ScheduledTasksScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Task name and priority
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -220,8 +221,6 @@ class _ScheduledTasksScreenState extends State<ScheduledTasksScreen> {
           ],
         ),
       ),
-
-      // Floating Action Button
       floatingActionButton: Transform.translate(
         offset: Offset(0, 35),
         child: Container(
@@ -239,7 +238,6 @@ class _ScheduledTasksScreenState extends State<ScheduledTasksScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
       bottomNavigationBar: StreamBuilder<int>(
         stream: NotificationService.getUnreadNotificationCount(userEmail),
         builder: (context, snapshot) {

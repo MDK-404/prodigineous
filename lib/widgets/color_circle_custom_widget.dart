@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TaskStatusLegend extends StatelessWidget {
   const TaskStatusLegend({Key? key}) : super(key: key);
@@ -17,14 +18,18 @@ class TaskStatusLegend extends StatelessWidget {
     return Wrap(
       spacing: 20,
       runSpacing: 10,
-      alignment: WrapAlignment.start, // important: align start
+      alignment: WrapAlignment.start,
       children: [
         Container(
           width: 150,
           child: Row(
             children: [
-              _coloredDot(Colors.green),
-              Text('Completed Task'),
+              _coloredDot(Color(0xff0CC302)),
+              Text(
+                'Completed Task',
+                style:
+                    GoogleFonts.poppins(color: Color(0xff2E3A59), fontSize: 10),
+              ),
             ],
           ),
         ),
@@ -32,8 +37,12 @@ class TaskStatusLegend extends StatelessWidget {
           width: 150,
           child: Row(
             children: [
-              _coloredDot(Colors.red),
-              Text('Terminated Task'),
+              _coloredDot(Color(0xFFFE0B0B)),
+              Text(
+                'Terminated Task',
+                style:
+                    GoogleFonts.poppins(color: Color(0xff2E3A59), fontSize: 10),
+              ),
             ],
           ),
         ),
@@ -41,7 +50,7 @@ class TaskStatusLegend extends StatelessWidget {
           width: 150,
           child: Row(
             children: [
-              _coloredDot(Colors.blue),
+              _coloredDot(Color(0xff0B7CFE)),
               Text('In Progress'),
             ],
           ),
@@ -50,7 +59,7 @@ class TaskStatusLegend extends StatelessWidget {
           width: 150,
           child: Row(
             children: [
-              _coloredDot(Colors.yellow),
+              _coloredDot(Color(0xffFFCF0F)),
               Text('To Do'),
             ],
           ),

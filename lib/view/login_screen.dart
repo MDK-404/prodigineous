@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:prodigenious/viewmodel/auth_view_model.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -133,7 +135,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 return;
                               }
 
-                              // Proceed with login
                               AuthViewModel().signInWithEmail(
                                 email: email,
                                 password: password,

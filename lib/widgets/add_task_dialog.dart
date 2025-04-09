@@ -45,8 +45,6 @@ void showAddTaskDialog(
                 ),
                 Divider(color: Colors.white, thickness: 1),
                 SizedBox(height: 10),
-
-                // Task Name Input
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -68,8 +66,6 @@ void showAddTaskDialog(
                   ),
                 ),
                 SizedBox(height: 15),
-
-                // Priority & Due Date Row
                 Row(
                   children: [
                     Expanded(
@@ -139,8 +135,6 @@ void showAddTaskDialog(
                   ],
                 ),
                 SizedBox(height: 10),
-
-                // Time Picker
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -169,12 +163,9 @@ void showAddTaskDialog(
                   icon: Icon(Icons.access_time, size: 18),
                   label: Text("Select Time"),
                 ),
-
                 SizedBox(height: 20),
                 Divider(color: Colors.white, thickness: 1),
                 SizedBox(height: 10),
-
-                // Add Task Button
                 ElevatedButton(
                   onPressed: () async {
                     if (taskController.text.isEmpty ||
@@ -211,7 +202,6 @@ void showAddTaskDialog(
                     DateTime notificationDate2 =
                         dueDateTime.subtract(Duration(days: 1));
 
-                    // Ensure the time part is correctly handled
                     notificationDate1 = DateTime(
                       notificationDate1.year,
                       notificationDate1.month,

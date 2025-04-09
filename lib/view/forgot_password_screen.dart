@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:prodigenious/viewmodel/auth_view_model.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key});
+
   @override
   _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
 }

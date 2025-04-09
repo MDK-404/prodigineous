@@ -6,9 +6,11 @@ import 'package:prodigenious/services/notificaiton_service.dart';
 import 'package:prodigenious/view/forgot_password_screen.dart';
 import 'package:prodigenious/view/home_screen.dart';
 import 'package:prodigenious/view/notification_screen.dart';
+import 'package:prodigenious/view/productivity_screen.dart';
 import 'package:prodigenious/view/profile_screen.dart';
 import 'package:prodigenious/view/scheduled_tasks_screen.dart';
 import 'package:prodigenious/viewmodel/auth_view_model.dart';
+import 'package:prodigenious/viewmodel/productivity_view_model.dart';
 
 import 'package:provider/provider.dart';
 import 'view/splash_screen.dart';
@@ -58,13 +60,13 @@ void main() async {
     initialDelay: const Duration(minutes: 1),
   );
 
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ProductivityViewModel(),
+      child: MyApp(),
+    ),
+  );
   checkAndMoveTasksToHistory();
-  checkTimeZone();
-}
-
-void checkTimeZone() {
-  print("📌 Current TimeZone: ${tz.local}");
 }
 
 class MyApp extends StatelessWidget {
@@ -86,6 +88,7 @@ class MyApp extends StatelessWidget {
           '/notifications': (context) => NotificationsScreen(),
           '/profile': (context) => EditProfileScreen(),
           '/scheduled_task_screen': (context) => ScheduledTasksScreen(),
+          '/productivity_screen': (context) => ProductivityScreen(),
         },
       ),
     );

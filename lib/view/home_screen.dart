@@ -11,6 +11,8 @@ import 'package:prodigenious/widgets/custom_appbar.dart';
 import 'package:prodigenious/widgets/navigation_bar.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -106,7 +108,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   Text("Task Status: - "),
                   Row(
                     children: [
-                      CircleAvatar(radius: 5, backgroundColor: Colors.yellow),
+                      CircleAvatar(
+                        radius: 5,
+                        backgroundColor: Color(0xffFFCF0F),
+                      ),
                       SizedBox(width: 5),
                       Text("ToDo"),
                     ],
@@ -114,7 +119,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(width: 10),
                   Row(
                     children: [
-                      CircleAvatar(radius: 5, backgroundColor: Colors.blue),
+                      CircleAvatar(
+                          radius: 5, backgroundColor: Color(0xff0B7CFE)),
                       SizedBox(width: 5),
                       Text("In Progress"),
                     ],
@@ -122,7 +128,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(width: 10),
                   Row(
                     children: [
-                      CircleAvatar(radius: 5, backgroundColor: Colors.green),
+                      CircleAvatar(
+                          radius: 5, backgroundColor: Color(0xff0CC302)),
                       SizedBox(width: 5),
                       Text("Done"),
                     ],
@@ -185,14 +192,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       Color statusColor;
                       switch (data['status']) {
                         case 'InProgress':
-                          statusColor = Colors.blue;
+                          statusColor = Color(0xff0B7CFE);
                           break;
                         case 'Done':
-                          statusColor = Colors.green;
+                          statusColor = Color(0xff0CC302);
                           break;
                         case 'ToDo':
                         default:
-                          statusColor = Colors.yellow;
+                          statusColor = Color(0xffFFCF0F);
                       }
 
                       final String taskName = data['task'] ?? 'No Task';
@@ -281,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           Icon(
                                             Icons.radio_button_checked,
                                             color: (currentStatus == 'ToDo')
-                                                ? Colors.yellow
+                                                ? Color(0xffFFCF0F)
                                                 : Colors.grey,
                                           ),
                                           SizedBox(width: 8),
@@ -297,7 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             Icons.radio_button_checked,
                                             color:
                                                 (currentStatus == 'InProgress')
-                                                    ? Colors.blue
+                                                    ? Color(0xff0B7CFE)
                                                     : Colors.grey,
                                           ),
                                           SizedBox(width: 8),
@@ -312,7 +319,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           Icon(
                                             Icons.radio_button_checked,
                                             color: (currentStatus == 'Done')
-                                                ? Colors.green
+                                                ? Color(0xff0CC302)
                                                 : Colors.grey,
                                           ),
                                           SizedBox(width: 8),

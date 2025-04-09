@@ -78,7 +78,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 const SizedBox(width: 8),
                 Text(
                   "Task History",
-                  style: TextStyle(
+                  style: GoogleFonts.poppins(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF2E3A59),
@@ -123,11 +123,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  _coloredDot(Colors.green),
+                  _coloredDot(Color(0xff0CC302)),
                   SizedBox(width: 4),
                   Text("Completed Task"),
                   SizedBox(width: 20),
-                  _coloredDot(Colors.red),
+                  _coloredDot(Color(0xFFFE0B0B)),
                   SizedBox(width: 4),
                   Text("Terminated Task"),
                 ],
@@ -168,8 +168,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         } catch (_) {}
                       }
 
-                      final Color textColor =
-                          (status == 'Done') ? Colors.green : Colors.red;
+                      final Color textColor = (status == 'Done')
+                          ? Color(0xff0CC302)
+                          : Color(0xFFFE0B0B);
 
                       IconData priorityIcon;
                       switch (priority.toLowerCase()) {

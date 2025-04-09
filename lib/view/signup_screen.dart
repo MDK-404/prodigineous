@@ -9,6 +9,8 @@ class SignupScreen extends StatelessWidget {
   final TextEditingController passwordCtrl = TextEditingController();
   final TextEditingController retypeCtrl = TextEditingController();
 
+  SignupScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
@@ -41,8 +43,6 @@ class SignupScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 30),
-
-                /// **Signup Card**
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Card(
