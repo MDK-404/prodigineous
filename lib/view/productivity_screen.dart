@@ -77,65 +77,6 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
     });
   }
 
-  // Widget section(String title, int assigned, int done, int failed) {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       const SizedBox(height: 25),
-  //       Text(
-  //         title,
-  //         style: GoogleFonts.poppins(
-  //           fontSize: 20,
-  //           fontWeight: FontWeight.w600,
-  //         ),
-  //       ),
-  //       const SizedBox(height: 10),
-  //       Row(
-  //         crossAxisAlignment: CrossAxisAlignment.center,
-  //         children: [
-  //           Expanded(
-  //             flex: 2,
-  //             child: SizedBox(
-  //               height: 120,
-  //               child: Container(
-  //                 padding: const EdgeInsets.all(16),
-  //                 decoration: BoxDecoration(
-  //                   color: const Color(0xFFB388FF),
-  //                   borderRadius: BorderRadius.circular(16),
-  //                 ),
-  //                 child: Center(
-  //                   child: Text(
-  //                     "Assigned Tasks\n$assigned",
-  //                     style: const TextStyle(
-  //                       color: Colors.white,
-  //                       fontWeight: FontWeight.bold,
-  //                       fontSize: 16,
-  //                     ),
-  //                     textAlign: TextAlign.center,
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //           const SizedBox(width: 8),
-  //           Expanded(
-  //             flex: 2,
-  //             child: SizedBox(
-  //               height: 120,
-  //               child: TaskProductivityChart(
-  //                 done: done,
-  //                 todo: assigned - (done + failed),
-  //                 inProgress: 0,
-  //                 terminated: failed,
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ],
-  //   );
-  // }
-
   Widget section(String title, int assigned, int done, int failed) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,6 +87,7 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
           style: GoogleFonts.poppins(
             fontSize: 20,
             fontWeight: FontWeight.w600,
+            color: Color(0xff2E3A59),
           ),
         ),
         const SizedBox(height: 10),
@@ -161,7 +103,7 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFB388FF),
+                    color: const Color(0xffA558E0),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Center(
@@ -203,7 +145,7 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.green, width: 1.5),
+                  border: Border.all(color: Color(0xffA558E0), width: 1.5),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -212,7 +154,7 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                       "Tasks Done",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: Color(0xff2E3A59),
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -233,7 +175,7 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.red, width: 1.5),
+                  border: Border.all(color: Color(0xffA558E0), width: 1.5),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -242,7 +184,7 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
                       "Tasks Failure",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: Color(0xff2E3A59),
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -291,12 +233,13 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Monthly Progress
               Row(
                 children: const [
                   Text("Congrats! 🎉",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xff020202))),
                 ],
               ),
               const SizedBox(height: 8),
@@ -316,7 +259,6 @@ class _ProductivityScreenState extends State<ProductivityScreen> {
 
               const Divider(height: 32, thickness: 1),
 
-              // Monthly Report
               section("Monthly Report", monthlyAssigned, monthlyDone,
                   monthlyFailed),
 

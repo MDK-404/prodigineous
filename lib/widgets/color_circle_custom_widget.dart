@@ -28,7 +28,7 @@ class TaskStatusLegend extends StatelessWidget {
               Text(
                 'Completed Task',
                 style:
-                    GoogleFonts.poppins(color: Color(0xff2E3A59), fontSize: 10),
+                    GoogleFonts.poppins(color: Color(0xff2E3A59), fontSize: 14),
               ),
             ],
           ),
@@ -41,7 +41,7 @@ class TaskStatusLegend extends StatelessWidget {
               Text(
                 'Terminated Task',
                 style:
-                    GoogleFonts.poppins(color: Color(0xff2E3A59), fontSize: 10),
+                    GoogleFonts.poppins(color: Color(0xff2E3A59), fontSize: 14),
               ),
             ],
           ),
@@ -51,7 +51,11 @@ class TaskStatusLegend extends StatelessWidget {
           child: Row(
             children: [
               _coloredDot(Color(0xff0B7CFE)),
-              Text('In Progress'),
+              Text(
+                'In Progress',
+                style:
+                    GoogleFonts.poppins(color: Color(0xff2E3A59), fontSize: 14),
+              ),
             ],
           ),
         ),
@@ -60,7 +64,11 @@ class TaskStatusLegend extends StatelessWidget {
           child: Row(
             children: [
               _coloredDot(Color(0xffFFCF0F)),
-              Text('To Do'),
+              Text(
+                'To Do',
+                style:
+                    GoogleFonts.poppins(color: Color(0xff2E3A59), fontSize: 14),
+              ),
             ],
           ),
         ),

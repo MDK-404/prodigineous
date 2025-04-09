@@ -22,89 +22,94 @@
 
 //   @override
 //   Widget build(BuildContext context) {
-//     return BottomAppBar(
-//       shape: const CircularNotchedRectangle(),
-//       notchMargin: 8.0,
-//       color: Colors.transparent,
-//       child: Container(
-//         height: 60,
-//         decoration: const BoxDecoration(
-//           gradient: LinearGradient(
-//             colors: [Color(0xffA558E0), Color(0xff5A307A)],
-//             begin: Alignment.topLeft,
-//             end: Alignment.bottomRight,
+//     return SafeArea(
+//       child: BottomAppBar(
+//         shape: const CircularNotchedRectangle(),
+//         notchMargin: 8.0,
+//         color: Colors.transparent,
+//         child: Container(
+//           height: 50,
+//           decoration: const BoxDecoration(
+//             gradient: LinearGradient(
+//               colors: [Color(0xffA558E0), Color(0xff5A307A)],
+//               begin: Alignment.topLeft,
+//               end: Alignment.bottomRight,
+//             ),
 //           ),
-//         ),
-//         child: Row(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             Padding(
-//               padding: const EdgeInsets.symmetric(horizontal: 15.0),
-//               child: Row(
-//                 children: [
-//                   _buildNavItem(
-//                     icon: Icons.home,
-//                     label: "Home",
-//                     iconColor:
-//                         (activeScreen == "home") ? Colors.amber : Colors.white,
-//                     onTap: onHomeTap,
-//                   ),
-//                   const SizedBox(width: 10),
-//                   _buildNavItem(
-//                     icon: Icons.schedule,
-//                     label: "Scheduled Tasks",
-//                     iconColor: (activeScreen == "scheduled")
-//                         ? Colors.amber
-//                         : Colors.white,
-//                     onTap: onScheduledTap,
-//                   ),
-//                 ],
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               Padding(
+//                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
+//                 child: Row(
+//                   children: [
+//                     _buildNavItem(
+//                       icon: 'assets/home_icon.png',
+//                       label: "Home",
+//                       iconColor: (activeScreen == "home")
+//                           ? Colors.amber
+//                           : Colors.white,
+//                       onTap: onHomeTap,
+//                     ),
+//                     const SizedBox(width: 10),
+//                     _buildNavItem(
+//                       icon: 'assets/scheduled_icon.png',
+//                       label: "Scheduled ",
+//                       iconColor: (activeScreen == "scheduled")
+//                           ? Colors.amber
+//                           : Colors.white,
+//                       onTap: onScheduledTap,
+//                     ),
+//                   ],
+//                 ),
 //               ),
-//             ),
-//             const SizedBox(width: 40),
-//             Padding(
-//               padding: const EdgeInsets.symmetric(horizontal: 20.0),
-//               child: Row(
-//                 children: [
-//                   _buildNotificationNavItem(
-//                     icon: Icons.notifications,
-//                     label: "Notifications",
-//                     iconColor: (activeScreen == "notifications")
-//                         ? Colors.amber
-//                         : Colors.white,
-//                     onTap: onNotificationTap,
-//                     count: unreadNotificationCount,
-//                   ),
-//                   const SizedBox(width: 10),
-//                   _buildNavItem(
-//                     icon: Icons.history,
-//                     label: "History",
-//                     iconColor: (activeScreen == "history")
-//                         ? Colors.amber
-//                         : Colors.white,
-//                     onTap: onHistoryTap,
-//                   ),
-//                 ],
+//               const SizedBox(width: 60),
+//               Padding(
+//                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
+//                 child: Row(
+//                   children: [
+//                     _buildNotificationNavItem(
+//                       icon: 'assets/notification_icon.png',
+//                       label: "Notifications",
+//                       iconColor: (activeScreen == "notifications")
+//                           ? Colors.amber
+//                           : Colors.white,
+//                       onTap: onNotificationTap,
+//                       count: unreadNotificationCount,
+//                     ),
+//                     const SizedBox(width: 10),
+//                     _buildNavItem(
+//                       icon: 'assets/history_icon.png',
+//                       label: "History",
+//                       iconColor: (activeScreen == "history")
+//                           ? Colors.amber
+//                           : Colors.white,
+//                       onTap: onHistoryTap,
+//                     ),
+//                   ],
+//                 ),
 //               ),
-//             ),
-//           ],
+//             ],
+//           ),
 //         ),
 //       ),
 //     );
 //   }
 
 //   Widget _buildNavItem({
-//     required IconData icon,
+//     required String icon,
 //     required String label,
 //     required Color iconColor,
 //     required VoidCallback onTap,
+//     double iconSize = 24,
 //   }) {
 //     return InkWell(
 //       onTap: onTap,
 //       child: Column(
 //         mainAxisSize: MainAxisSize.min,
 //         children: [
-//           Icon(icon, color: iconColor, size: 30),
+//           Image.asset(icon,
+//               color: iconColor, width: iconSize, height: iconSize),
 //           Text(label,
 //               style: const TextStyle(color: Colors.white, fontSize: 12)),
 //         ],
@@ -113,7 +118,7 @@
 //   }
 
 //   Widget _buildNotificationNavItem({
-//     required IconData icon,
+//     required String icon,
 //     required String label,
 //     required Color iconColor,
 //     required VoidCallback onTap,
@@ -127,7 +132,10 @@
 //           Column(
 //             mainAxisSize: MainAxisSize.min,
 //             children: [
-//               Icon(icon, color: iconColor, size: 30),
+//               Image.asset(icon,
+//                   color: iconColor,
+//                   width: 24,
+//                   height: 24), // Increased width/height for better visibility
 //               Text(label,
 //                   style: const TextStyle(color: Colors.white, fontSize: 12)),
 //             ],
@@ -157,7 +165,6 @@
 //     );
 //   }
 // }
-
 import 'package:flutter/material.dart';
 
 class BottomNavBar extends StatelessWidget {
@@ -213,18 +220,17 @@ class BottomNavBar extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     _buildNavItem(
-                      icon: 'assets/scheduled_task_icon.png',
+                      icon: 'assets/scheduled_icon.png',
                       label: "Scheduled Tasks",
                       iconColor: (activeScreen == "scheduled")
                           ? Colors.amber
                           : Colors.white,
                       onTap: onScheduledTap,
-                      iconSize: 28,
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 40),
+              const SizedBox(width: 50),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Row(
@@ -268,13 +274,24 @@ class BottomNavBar extends StatelessWidget {
       onTap: onTap,
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.asset(icon,
-              color: iconColor,
-              width: iconSize,
-              height: iconSize), // Increased width/height for better visibility
-          Text(label,
-              style: const TextStyle(color: Colors.white, fontSize: 12)),
+          Image.asset(
+            icon,
+            color: iconColor,
+            width: iconSize,
+            height: iconSize,
+          ),
+          const SizedBox(height: 4), // Slightly more spacing
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+            ),
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );
@@ -294,13 +311,24 @@ class BottomNavBar extends StatelessWidget {
         children: [
           Column(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset(icon,
-                  color: iconColor,
-                  width: 24,
-                  height: 24), // Increased width/height for better visibility
-              Text(label,
-                  style: const TextStyle(color: Colors.white, fontSize: 12)),
+              Image.asset(
+                icon,
+                color: iconColor,
+                width: 24,
+                height: 24,
+              ),
+              const SizedBox(height: 4), // Consistent spacing
+              Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ],
           ),
           if (count > 0)

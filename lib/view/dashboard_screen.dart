@@ -100,7 +100,10 @@ class _TaskDashboardScreenState extends State<TaskDashboardScreen> {
                 SizedBox(width: 8),
                 Text(
                   "Task Dashboard",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0XFF2E3A59)),
                 ),
               ],
             ),
